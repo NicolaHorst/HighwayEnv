@@ -8,3 +8,10 @@ from highway_env.envs.lane_keeping_env import *
 from highway_env.envs.u_turn_env import *
 from highway_env.envs.exit_env import *
 from highway_env.envs.racetrack_env import *
+from highway_env.envs.nicola_custom_env import *
+import gymnasium as gym
+
+gym.envs.register(
+    id='nicola_custom_env-v0',
+    entry_point='highway_env.envs:CustomRoadEnv',
+)
