@@ -15,3 +15,8 @@ gym.envs.register(
     id='nicola_custom_env-v0',
     entry_point='highway_env.envs:CustomRoadEnv',
 )
+
+gym.envs.register(
+    id="default_racetrack",
+    entry_point='highway_env.envs:RacetrackEnv'
+)
