@@ -22,14 +22,14 @@ if __name__ == '__main__':
                 n_steps=batch_size * 12 // n_cpu,
                 batch_size=batch_size,
                 n_epochs=20,
-                learning_rate=5e-4,
+                learning_rate=4e-4,
                 gamma=0.9,
                 verbose=2,
                 tensorboard_log=r"/Users/I518095/Documents/GitHub/HighwayEnv/tensorboard")
     # Train the model
     if TRAIN:
-        model.learn(total_timesteps=int(1e5))
-        model.save(r"/Users/I518095/Documents/GitHub/HighwayEnv/Models/model_v1")
+        model.learn(total_timesteps=int(2.5e4))
+        model.save(r"/Users/I518095/Documents/GitHub/HighwayEnv/Models/model_v4")
         del model
 
     # Run the algorithm

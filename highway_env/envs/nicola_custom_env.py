@@ -45,10 +45,11 @@ class CustomRoadEnv(AbstractEnv):
             "simulation_frequency": 15,
             "policy_frequency": 5,
             "duration": 300,
-            "collision_reward": -4,
+            "collision_reward": -100,
             "lane_centering_cost": 4,
             "lane_centering_reward": 1,
-            "action_reward": -0.3,
+            "action_reward": -0.01,
+            "on_road_reward": 1,
             "controlled_vehicles": 1,
             "other_vehicles": 10,
             "screen_width": 600,
@@ -59,20 +60,20 @@ class CustomRoadEnv(AbstractEnv):
 
     def _reward(self, action: np.ndarray) -> float:
         rewards = self._rewards(action)
-        reward = sum(self.config.get(name, 0) * reward for name, reward in rewards.items())
-        reward = utils.lmap(reward, [self.config["collision_reward"], 1], [0, 1])
-        reward *= rewards["on_road_reward"]
+        reward = sum(reward for name, reward in rewards.items())
         return reward
 
     def _rewards(self, action: np.ndarray):
         _, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
         return {
             "lane_centering_reward": 1 / (1 + self.config["lane_centering_cost"] * lateral ** 2),
-            "action_reward": np.linalg.norm(action),
-            "collision_reward": self.vehicle.crashed,
-            "on_road_reward": self.vehicle.on_road,
+            "action_reward": self.config["action_reward"],
+            # custom collision reward
+            "collision_reward": self.config["collision_reward"] if self.vehicle.crashed else 0,
+            # custom on road reward and negative reward for getting of the lane
+            "on_road_reward": self.config["on_road_reward"] if self.vehicle.on_road else -10*self.config["on_road_reward"],
             # custom alive reward that increases over time to give the model incentives to live longer
-            "alive_reward": self.time / (self.config["duration"] / 4)
+            "alive_reward": self.time / self.config["duration"]
         }
 
     def _is_terminated(self) -> bool:
